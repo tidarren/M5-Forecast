@@ -1,0 +1,22 @@
+{
+    "trial_55":
+    {
+        "lambda_l1": 2.543319817550718e-06, 
+        "lambda_l2": 1.7725234133065045e-08, 
+        "num_leaves": 99, 
+        "feature_fraction": 0.4026974688867828, 
+        "bagging_fraction": 0.8983978439297745, 
+        "bagging_freq": 7, 
+        "min_child_samples": 5
+    },
+    "trial_8":
+    {
+        "lambda_l1": 4.492933307387174, 
+        "lambda_l2": 2.1470514963890834, 
+        "num_leaves": 249, 
+        "feature_fraction": 0.4045767240136032, 
+        "bagging_fraction": 0.40715905350476517, 
+        "bagging_freq": 3, 
+        "min_child_samples": 43
+    }
+}

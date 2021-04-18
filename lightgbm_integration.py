@@ -53,7 +53,7 @@ def objective(trial):
 if __name__ == "__main__":
     
     study = optuna.create_study()
-    study.optimize(objective, n_trials=100)
+    study.optimize(objective, n_trials=2)
 
     print("Number of finished trials: {}".format(len(study.trials)))
 
@@ -63,6 +63,10 @@ if __name__ == "__main__":
     print("  Value: {}".format(trial.value))
 
     print("  Params: ")
+    for key, value in trial.params.items():
+        print("    {}: {},".format(key, value))
+    
     with open("Params.txt", "a") as f:
+        print("\n===\n", file=f)
         for key, value in trial.params.items():
             print("    {}: {},".format(key, value), file=f)

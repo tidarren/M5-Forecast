@@ -3,10 +3,11 @@ import numpy as np
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 from utils import load_data, load_param
+import os
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--trial', type=str, help='define model trial', default="trial_8")
+parser.add_argument('--trial', type=str, help='define model trial', default="trial_42")
 opt = parser.parse_args()
 print(opt)
 
@@ -28,4 +29,9 @@ pred_labels = np.rint(preds)
 rmse = sqrt(mean_squared_error(valid_y, pred_labels))
 print('rmse: {}'.format(rmse))
 
-gbm.save_model("model_{}.lgb".format(opt.trial))
+MODEL_DIR = "models"
+if not os.path.exists(MODEL_DIR):
+    os.mkdir(MODEL_DIR)
+MODEL_FILE = "model_{}.lgb".format(opt.trial)
+
+gbm.save_model(os.path.join(MODEL_DIR,MODEL_FILE))

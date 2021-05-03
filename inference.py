@@ -1,14 +1,19 @@
 from process_train_valid import *
 import argparse
+import os
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--trial', type=str, help='define model trial', default="trial_8")
+parser.add_argument('--trial', type=str, help='define model trial', default="trial_42")
 opt = parser.parse_args()
 print(opt)
 
+MODEL_DIR = "models"
+OUTPUT_DIR = "submissions"
+if not os.path.exists(OUTPUT_DIR):
+    os.mkdir(OUTPUT_DIR)
 OUTPUT_NAME = "submission_{}.csv".format(opt.trial)
 MODEL_FILE = "model_{}.lgb".format(opt.trial)
-m_lgb = lgb.Booster(model_file=MODEL_FILE) 
+m_lgb = lgb.Booster(model_file=os.path.join(MODEL_DIR,MODEL_FILE) )
 
 fday = datetime(2016,5, 23) #d_1942
 max_lags = 70
@@ -50,4 +55,4 @@ for icount, (alpha, weight) in enumerate(zip(alphas, weights)):
 sub2 = sub.copy()
 sub2["id"] = sub2["id"].str.replace("validation$", "evaluation", regex=True)
 sub = pd.concat([sub, sub2], axis=0, sort=False)
-sub.to_csv(OUTPUT_NAME,index=False)
+sub.to_csv(os.path.join(OUTPUT_DIR,OUTPUT_NAME), index=False)

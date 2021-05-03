@@ -96,7 +96,7 @@ def create_fea(dt):
                 dt[date_feat_name] = getattr(dt["date"].dt.isocalendar(), "week").astype("int16")
             else:
                 dt[date_feat_name] = getattr(dt["date"].dt, date_feat_func).astype("int16")
-
+    
 
 def downcast(df):
     cols = df.dtypes.index.tolist()

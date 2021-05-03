@@ -13,7 +13,7 @@ import pickle
 from sklearn.metrics import mean_squared_error
 from math import sqrt
 from utils import load_data
-
+import json
 
 cat_feats = ['item_id', 'dept_id','store_id', 'cat_id', 'state_id'] + \
             ["event_name_1", "event_name_2", "event_type_1", "event_type_2"]
@@ -28,15 +28,15 @@ def objective(trial):
         "objective": "poisson",
         "metric": "rmse",
         "verbosity": -1,
-        "boosting_type": "gbdt",
+        "boosting_type": "goss", #default gbdt
         "lambda_l1": trial.suggest_float("lambda_l1", 1e-8, 10.0, log=True),
         "lambda_l2": trial.suggest_float("lambda_l2", 1e-8, 10.0, log=True),
         "num_leaves": trial.suggest_int("num_leaves", 2, 256),
         "feature_fraction": trial.suggest_float("feature_fraction", 0.4, 1.0),
-        "bagging_fraction": trial.suggest_float("bagging_fraction", 0.4, 1.0),
-        "bagging_freq": trial.suggest_int("bagging_freq", 1, 7),
+        # "bagging_fraction": trial.suggest_float("bagging_fraction", 0.4, 1.0),
+        # "bagging_freq": trial.suggest_int("bagging_freq", 1, 7),
         "min_child_samples": trial.suggest_int("min_child_samples", 5, 100),
-        'num_iterations' : 500,
+        # 'num_iterations' : 500,
     }
 
     gbm = lgb.train(
@@ -53,11 +53,11 @@ def objective(trial):
 if __name__ == "__main__":
     
     study = optuna.create_study()
-    study.optimize(objective, n_trials=2)
+    study.optimize(objective, n_trials=1)
 
     print("Number of finished trials: {}".format(len(study.trials)))
 
-    print("Best trial:")
+    print("Best trial:") 
     trial = study.best_trial
 
     print("  Value: {}".format(trial.value))
@@ -66,7 +66,16 @@ if __name__ == "__main__":
     for key, value in trial.params.items():
         print("    {}: {},".format(key, value))
     
-    with open("Params.txt", "a") as f:
-        print("\n===\n", file=f)
-        for key, value in trial.params.items():
-            print("    {}: {},".format(key, value), file=f)
+    with open("params.json") as f:
+        js = json.load(f)
+    
+
+    new_trained_param = {key:value for key, value in trial.params.items()}
+    new_trained_param["objective"]= "poisson"
+    new_trained_param["metric"]= "rmse"
+    new_trained_param["verbosity"]= -1
+    new_trained_param["boosting_type"]= "goss" 
+    js["trial_{}".format(trial.value)] = new_trained_param
+
+    with open("params.json", "w") as f:
+        json.dump(js, f, indent=4)
